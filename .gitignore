@@ -1,0 +1,9 @@
+log/*
+occurrenceFile/*
+temp/*/*
+result/*/*
+
+xxxx/
+
+*.csv
+chromedriver.exe
