@@ -2,7 +2,7 @@ import threading
 
 
 class ThreadUtil:
-    def __init__(self, n: int, func, args: list,):
+    def __init__(self, n: int, func, *args):
         self.n = n
         self.func = func
         self.args = args
@@ -11,16 +11,10 @@ class ThreadUtil:
         self.func = func
 
     def run(self):
-        total = len(self.args[0])
-        batch = total // self.n + 1
-
         threads = []
         for i in range(0, self.n):
-            start = i * batch
-            end = (i + 1) * batch
-
-            # todo:解耦
-            t = threading.Thread(target=self.func, args=[self.args[0][start:end], self.args[1][start:end], i])
+            # 解耦,每个线程所获取的切片在类外部完成
+            t = threading.Thread(target=self.func, args=[self.args[0][i], self.args[1][i], i])
             t.start()
             print(f"Create thread-{i}, thread id: {t.ident}")
             threads.append(t)
