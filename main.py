@@ -1,10 +1,21 @@
 import time
 import pandas as pd
+import requests
 
 from util.log import MyLog
 from util.threadUtil import ThreadUtil
 from config import *
 from spider.BaiduSpiderRequest import BaiduSpiderRequest
+
+
+def init():
+    # 百度更新TLS指纹识别验证机制的解决方法。
+    requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS += 'AES128'
+    try:
+        requests.packages.urllib3.contrib.pyopenssl.DEFAULT_SSL_CIPHER_LIST += 'AES128'
+    except AttributeError:
+        # no pyopenssl support used / needed / available
+        pass
 
 # 先调整config文件中的相关配置信息，再启动
 def thread_func(id_list, address_list, i):
@@ -41,7 +52,7 @@ def crash_recovery(n:int, id_args:list, address_args:list):
             # 读取到的最后一行
             last_line = lines[-1]
             # 读取到的最后一行的id
-            last_id = last_line.split(",")[0]
+            last_id = int(last_line.split(",")[0])
             # 找到id_list中值为last_id的索引
             last_id_index = id_arg.index(last_id)
             # 切片
@@ -55,6 +66,8 @@ def crash_recovery(n:int, id_args:list, address_args:list):
 
 
 if __name__ == '__main__':
+    init()
+
     df = pd.read_csv(src_filename)
     address_list = df['address']
     id_list = df['Id']
@@ -69,11 +82,11 @@ if __name__ == '__main__':
     # 将address_list和id_list平均切分为threadNum份。每个线程爬取一份
     total = len(address_list)
     step = total // threadNum + 1
-    id_args = [id_list[i:i+step] for i in range(0, total, step)]
-    address_args = [address_list[i:i+step] for i in range(0, total, step)]
+    id_args = [list(id_list[i:i+step]) for i in range(0, total, step)]
+    address_args = [list(address_list[i:i+step]) for i in range(0, total, step)]
 
     # 崩溃恢复使用：
-    # id_args, address_args = crash_recovery(threadNum, id_args, address_args)
+    id_args, address_args = crash_recovery(threadNum, id_args, address_args)
 
 
     # 创建线程并启动

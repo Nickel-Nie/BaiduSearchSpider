@@ -2,7 +2,7 @@ from datetime import datetime
 from util import log
 from util.log import MyLog
 
-year = 2014
+year = 2018
 version = "request"  # 只有selenium和request两种版本。
 
 # 文件名称相关

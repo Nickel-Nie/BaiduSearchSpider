@@ -6,33 +6,37 @@ from lxml import etree
 
 from config import logger
 from .BaiduSpider import BaiduSpider
+from util.cookieParser import cookie_parser, param_parser
 
 
 class BaiduSpiderRequest(BaiduSpider):
     def __init__(self, url, startYear: int, endYear: int):
         BaiduSpider.__init__(self, url, startYear, endYear)
+        cookieFile = r"Z:\UESTC\Code\Python\BaiduSpider\util\cookies.txt"
+        paramsFile = r"Z:\UESTC\Code\Python\BaiduSpider\util\params.txt"
+        self.cookies = cookie_parser(cookieFile)
 
-        self.cookies = {
-            'BIDUPSID': 'A76367BB28D7ED1DEFF85DF37E31EEB5',
-            'PSTM': '1561214638',
-            'BAIDUID': 'E71A90307FC0D94471C70B3FF600E82C:SL=0:NR=10:FG=1',
-            'BDUSS': 'MzZE5XQkZCaUVCbHJPWGFpcGNMUXIycS11RXkyN3Fxb3hRWDRVUUhubndjNnBnSVFBQUFBJCQAAAAAAAAAAAEAAAAUBZIUwLax-aHi0vS2-QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPDmgmDw5oJgOU',
-            'BDUSS_BFESS': 'MzZE5XQkZCaUVCbHJPWGFpcGNMUXIycS11RXkyN3Fxb3hRWDRVUUhubndjNnBnSVFBQUFBJCQAAAAAAAAAAAEAAAAUBZIUwLax-aHi0vS2-QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPDmgmDw5oJgOU',
-            'BD_UPN': '12314753',
-            'BDORZ': 'B490B5EBF6F3CD402E515D22BCDA1598',
-            'delPer': '0',
-            'BD_CK_SAM': '1',
-            'PSINO': '6',
-            'BAIDUID_BFESS': 'E71A90307FC0D94471C70B3FF600E82C:SL=0:NR=10:FG=1',
-            'COOKIE_SESSION': '143_0_3_3_1_3_0_0_3_2_2_0_0_0_8_0_1672146809_0_1672146801%7C3%230_0_1672146801%7C1',
-            'BA_HECTOR': '2h21akak2ka4a1852k2ka57c1i1lui71m',
-            'ZFY': '23HPinq563xo7:AQjYc:AqX4sL98:Avpsm0lbn:A:Ar23l5w:C',
-            'BD_HOME': '1',
-            'BDRCVFR[feWj1Vr5u3D]': 'I67x6TjHwwYf0',
-            'H_PS_PSSID': '38185_36560_38368_37861_38170_38290_38221_38262_37924_38313_38382_38040_26350_22158_38283_37881',
-            'H_PS_645EC': 'cd78PCtt9bsjnDDsLuKfLcIx%2Fl6otxBWLFHbz0CdJZ5zgRB0ywTbiSm6ZKAV69soEcyA',
-            'BDSVRTM': '219',
-        }
+        # self.cookies = {
+        #     'BIDUPSID': 'A76367BB28D7ED1DEFF85DF37E31EEB5',
+        #     'PSTM': '1561214638',
+        #     'BAIDUID': 'E71A90307FC0D94471C70B3FF600E82C:SL=0:NR=10:FG=1',
+        #     'BDUSS': 'MzZE5XQkZCaUVCbHJPWGFpcGNMUXIycS11RXkyN3Fxb3hRWDRVUUhubndjNnBnSVFBQUFBJCQAAAAAAAAAAAEAAAAUBZIUwLax-aHi0vS2-QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPDmgmDw5oJgOU',
+        #     'BDUSS_BFESS': 'MzZE5XQkZCaUVCbHJPWGFpcGNMUXIycS11RXkyN3Fxb3hRWDRVUUhubndjNnBnSVFBQUFBJCQAAAAAAAAAAAEAAAAUBZIUwLax-aHi0vS2-QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPDmgmDw5oJgOU',
+        #     'BD_UPN': '12314753',
+        #     'BDORZ': 'B490B5EBF6F3CD402E515D22BCDA1598',
+        #     'delPer': '0',
+        #     'BD_CK_SAM': '1',
+        #     'PSINO': '6',
+        #     'BAIDUID_BFESS': 'E71A90307FC0D94471C70B3FF600E82C:SL=0:NR=10:FG=1',
+        #     'COOKIE_SESSION': '143_0_3_3_1_3_0_0_3_2_2_0_0_0_8_0_1672146809_0_1672146801%7C3%230_0_1672146801%7C1',
+        #     'BA_HECTOR': '2h21akak2ka4a1852k2ka57c1i1lui71m',
+        #     'ZFY': '23HPinq563xo7:AQjYc:AqX4sL98:Avpsm0lbn:A:Ar23l5w:C',
+        #     'BD_HOME': '1',
+        #     'BDRCVFR[feWj1Vr5u3D]': 'I67x6TjHwwYf0',
+        #     'H_PS_PSSID': '38185_36560_38368_37861_38170_38290_38221_38262_37924_38313_38382_38040_26350_22158_38283_37881',
+        #     'H_PS_645EC': 'cd78PCtt9bsjnDDsLuKfLcIx%2Fl6otxBWLFHbz0CdJZ5zgRB0ywTbiSm6ZKAV69soEcyA',
+        #     'BDSVRTM': '219',
+        # }
 
         self.headers = {
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
@@ -71,6 +75,8 @@ class BaiduSpiderRequest(BaiduSpider):
             'gpc': f'stf={self.startTimestamp},{self.endTimestamp}|stftype=2'  # 搜索时间
         }
 
+        # self.params = param_parser(paramsFile)
+
     def run(self, Id, keyword)->int:
         self.params['wd'] = keyword  # 填充关键词
 
@@ -92,6 +98,7 @@ class BaiduSpiderRequest(BaiduSpider):
                     logger.error(f"id:{Id}, detail:无法匹配到数字")
                     # print("无法匹配到数字")
             else:
+                #TODO：解析失败的情况下，可能的原因是cookie不可用的，把响应头中的Set-Cookie字段拿出来更新到self.cookie中
                 g = ""
                 logger.error(f"id:{Id}, detail:未匹配到需要的元素")
                 # print("未匹配到需要的元素")
